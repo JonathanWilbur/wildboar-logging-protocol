@@ -1,0 +1,11 @@
+- [ ] WELP URI Scheme (log://user:password@FQDN/concern/urgency)
+- [x] Make concerns booleans
+- [x] Sensitivity Flags
+- [ ] Document why all cryptography should be handled by TLS
+- [ ] Document censorship
+  - [ ] Why it should be done on the log server, not from the log client.
+- [ ] Document concerns
+  - [ ] Departments
+  - [ ] Examples
+- [x] Log Response
+- [ ] Document what an API might look like

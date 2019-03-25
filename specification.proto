@@ -1,0 +1,86 @@
+syntax = "proto3";
+package welp;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+// Examples of notifications
+enum Urgency {
+    INERT = 0; // Nothing
+    PATIENT = 1; // Ticket
+    EXPEDITED = 2; // Email or chat message
+    IMMEDIATE = 3; // Text message or phone call
+}
+
+enum Severity {
+    LOW = 0;
+    MEDIUM = 1;
+    HIGH = 2;
+}
+
+message SensitivityFlags {
+    boolean containsPasswords = 1;
+    boolean containsPersonalInformation = 2;
+    boolean containsSourceCodeInformation = 3;
+    boolean containsFinancialInformation = 4;
+    boolean containsPaymentCardInformation = 5;
+    boolean containsHealthcareInformation = 6;
+    boolean containsAcademicInformation = 7;
+}
+
+message Concerns {
+    boolean other = 0;
+    boolean confidentiality = 1;
+    boolean integrity = 2;
+    boolean availability = 3;
+    boolean legality = 4;
+    boolean morality = 5;
+    boolean validity = 6;
+    boolean portability = 7;
+    boolean internationalization = 8;
+    boolean publicity = 9;
+    boolean frugality = 10;
+}
+
+message LogRequest {
+
+    // This comes first, because it may be grounds for immediately
+    // disqualifying this log message from storage.
+    SensitivityFlags sensitivityFlags = 1;
+
+    /*
+        Even though this may be deduced from the origin of the package itself,
+        it is included as a part of the message itself to accomodate log
+        message relaying and virtual hosts. For instance, if a web server is
+        configured to use virtual hosts, generated log messages can contain
+        the FQDN of the virtual host itself.
+    */
+    string originFQDN = 2;
+    TimeStamp originationTime = 3;
+    Concerns concern = 4;
+    Urgency urgency = 5;
+    Severity severity = 6;
+    uint32 logMessageValue = 7;
+    Any message = 100;
+}
+
+message RejectionReasons {
+    boolean other = 1;
+    boolean malformed = 1;
+    boolean sensitive = 2;
+    boolean useless = 3;
+    boolean storageFull = 4;
+    boolean notMyJob = 5;
+}
+
+message LogResponse {
+    // If all booleans in rejectedReasons are false, it means the message was
+    // accepted.
+    RejectionReasons rejectionReasons = 1;
+
+    // This can be useful for debugging, because a long difference between
+    // LogRequest.originationTime and LogResponse.loggedTime could indicate
+    // high network congestion, network latency, CPU strain, disk congestion,
+    // or database contention.
+    TimeStamp loggedTime = 2;
+}
